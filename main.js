@@ -8,9 +8,7 @@ const articleTitle = document.getElementById("article-title");
 const articleImg = document.getElementById("article-img");
 const articleContent = document.getElementById("article-content");
 const articleElement = document.getElementsByClassName("article")[0];
-const articleEndpoint = `http://54.201.254.45:3000/article?key=${
-  import.meta.env.VITE_ACCESS_KEY
-}&category=`;
+const articleEndpoint = `http://54.201.254.45:3000/article?key=${process.env.ACCESS_KEY}&category=`;
 
 const getCurrentCategory = () => {
   const checkedRadio = Array.from(radioButtons).find((radio) => radio.checked);
