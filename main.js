@@ -8,7 +8,7 @@ const articleTitle = document.getElementById("article-title");
 const articleImg = document.getElementById("article-img");
 const articleContent = document.getElementById("article-content");
 const articleElement = document.getElementsByClassName("article")[0];
-const articleEndpoint = `https://letsgeneratearticles/article?key=${process.env.ACCESS_KEY}&category=`;
+const articleEndpoint = `https://letsgeneratearticles/article?key=AIzaSyD5&category=`;
 
 const getCurrentCategory = () => {
   const checkedRadio = Array.from(radioButtons).find((radio) => radio.checked);
