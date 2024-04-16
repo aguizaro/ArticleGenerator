@@ -1,18 +1,37 @@
+import html2canvas from "html2canvas";
+
 // find elements
 const app = document.getElementById("app");
 const dropdown = document.getElementById("dropdown-button");
-const dropdownMenu = document.getElementsByClassName("dropdown-content")[0];
+const dropdownMenu = document.querySelector(".dropdown-content");
 const generateButton = document.getElementById("generate-button");
 const radioButtons = document.querySelectorAll('input[type="radio"]');
 const articleTitle = document.getElementById("article-title");
 const articleImg = document.getElementById("article-img");
 const articleContent = document.getElementById("article-content");
-const articleElement = document.getElementsByClassName("article")[0];
+const articleElement = document.querySelector(".article");
+const downloadButton = document.getElementById("download-button");
 const articleEndpoint = `https://letsgeneratearticles.com/article?key=AIzaSyD5&category=`;
 
 const getCurrentCategory = () => {
   const checkedRadio = Array.from(radioButtons).find((radio) => radio.checked);
   return checkedRadio.value;
+};
+const captureScreen = async () => {
+  const articleScreen = await html2canvas(articleElement, {
+    logging: true,
+    ignoreElements: (element) => element.classList.contains("download"),
+    backgroundColor:
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "#242424"
+        : "#ffffff",
+  });
+  //download the screnshot
+  const link = document.createElement("a");
+  link.href = articleScreen.toDataURL();
+  link.download = "article-screenshot.png";
+  link.click();
 };
 
 const generateArticle = async () => {
@@ -28,7 +47,7 @@ const generateArticle = async () => {
 
     articleElement.classList.add("is-active");
     articleTitle.textContent = data.response.title;
-    articleImg.src = data.response.urlToImage;
+    articleImg.src = `data:image/jpeg;base64,${data.response.urlToImage}`;
     articleContent.textContent = data.response.content;
 
     generateButton.disabled = false;
@@ -39,8 +58,21 @@ const generateArticle = async () => {
   }
 };
 
+const downloadArticle = async () => {
+  try {
+    downloadButton.disabled = true;
+    await captureScreen();
+    downloadButton.disabled = false;
+  } catch (error) {
+    console.error(error);
+    downloadButton.disabled = false;
+  }
+};
+
 dropdown.addEventListener("click", () => {
   dropdownMenu.classList.toggle("is-active");
 });
 
 generateButton.addEventListener("click", generateArticle);
+
+downloadButton.addEventListener("click", downloadArticle);
