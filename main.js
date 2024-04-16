@@ -10,6 +10,7 @@ const articleTitle = document.getElementById("article-title");
 const articleImg = document.getElementById("article-img");
 const articleContent = document.getElementById("article-content");
 const articleElement = document.querySelector(".article");
+const downloadDiv = document.querySelector(".download");
 const downloadButton = document.getElementById("download-button");
 const articleEndpoint = `https://letsgeneratearticles.com/article?key=AIzaSyD5&category=`;
 
@@ -18,9 +19,14 @@ const getCurrentCategory = () => {
   return checkedRadio.value;
 };
 const captureScreen = async () => {
+  const weblink = document.createElement("p");
+  weblink.id = "weblink";
+  weblink.textContent = "aguizaro.github.io/ArticleGenerator/";
+  downloadDiv.appendChild(weblink);
+
   const articleScreen = await html2canvas(articleElement, {
     logging: true,
-    ignoreElements: (element) => element.classList.contains("download"),
+    ignoreElements: (element) => element.id === "download-button",
     backgroundColor:
       window.matchMedia &&
       window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -32,6 +38,7 @@ const captureScreen = async () => {
   link.href = articleScreen.toDataURL();
   link.download = "article-screenshot.png";
   link.click();
+  weblink.remove();
 };
 
 const generateArticle = async () => {

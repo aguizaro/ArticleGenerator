@@ -137,6 +137,10 @@ button:focus-visible {
   border-radius: 20px;
 }
 
+#weblink {
+  font-family: 'Courier New', Courier, monospace;
+}
+
 .dropdown {
   position: relative;
 }
