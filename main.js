@@ -1,7 +1,6 @@
 import html2canvas from "html2canvas";
 
 // find elements -------------------------------------------------------------
-
 const app = document.getElementById("app");
 const dropdown = document.getElementById("dropdown-button");
 const dropdownMenu = document.querySelector(".dropdown-content");
