@@ -111,7 +111,10 @@ const populateArticle = (data) => {
   articleTitle.textContent = data.response.title;
   articleImg.src = `data:image/jpeg;base64,${data.response.urlToImage}`;
   articleContent.textContent = data.response.content;
-  const generatedLink = window.location.origin + `?seed=${data.response.seed}`;
+  const generatedLink =
+    window.location.origin +
+    window.location.pathname +
+    `?seed=${data.response.seed}`;
   weblink.textContent = generatedLink;
   window.history.replaceState({}, "", generatedLink);
 };
