@@ -1,6 +1,7 @@
 import html2canvas from "html2canvas";
 
-// find elements
+// find elements -------------------------------------------------------------
+
 const app = document.getElementById("app");
 const dropdown = document.getElementById("dropdown-button");
 const dropdownMenu = document.querySelector(".dropdown-content");
@@ -11,19 +12,21 @@ const articleImg = document.getElementById("article-img");
 const articleContent = document.getElementById("article-content");
 const articleElement = document.querySelector(".article");
 const downloadDiv = document.querySelector(".download");
+const weblink = document.getElementById("weblink");
 const downloadButton = document.getElementById("download-button");
 const articleEndpoint = `https://letsgeneratearticles.com/article?key=AIzaSyD5&category=`;
+const generatedEndpoint = `https://letsgeneratearticles.com/generated?key=AIzaSyD5&seed=`;
 
+// functions -------------------------------------------------------------
+
+// get the current category selected
 const getCurrentCategory = () => {
   const checkedRadio = Array.from(radioButtons).find((radio) => radio.checked);
   return checkedRadio.value;
 };
-const captureScreen = async () => {
-  const weblink = document.createElement("p");
-  weblink.id = "weblink";
-  weblink.textContent = "aguizaro.github.io/ArticleGenerator/";
-  downloadDiv.appendChild(weblink);
 
+// capture the screen based on DOM elements and dwonload as image
+const captureScreen = async () => {
   const articleScreen = await html2canvas(articleElement, {
     logging: true,
     ignoreElements: (element) => element.id === "download-button",
@@ -33,38 +36,14 @@ const captureScreen = async () => {
         ? "#242424"
         : "#ffffff",
   });
-  //download the screnshot
+
   const link = document.createElement("a");
   link.href = articleScreen.toDataURL();
   link.download = "article-screenshot.png";
   link.click();
-  weblink.remove();
 };
 
-const generateArticle = async () => {
-  try {
-    generateButton.disabled = true;
-    articleElement.classList.remove("is-active");
-
-    const category = getCurrentCategory();
-    const response = await fetch(`${articleEndpoint}${category}`);
-    const data = await response.json();
-
-    console.log(data.response);
-
-    articleElement.classList.add("is-active");
-    articleTitle.textContent = data.response.title;
-    articleImg.src = `data:image/jpeg;base64,${data.response.urlToImage}`;
-    articleContent.textContent = data.response.content;
-
-    generateButton.disabled = false;
-    dropdownMenu.classList.remove("is-active");
-  } catch (error) {
-    console.error(error);
-    generateButton.disabled = false;
-  }
-};
-
+// handle download button click
 const downloadArticle = async () => {
   try {
     downloadButton.disabled = true;
@@ -76,10 +55,75 @@ const downloadArticle = async () => {
   }
 };
 
+// fetch article from API given the category
+const generateArticle = async () => {
+  try {
+    generateButton.disabled = true;
+    articleElement.classList.remove("is-active");
+
+    const category = getCurrentCategory();
+    const response = await fetch(`${articleEndpoint}${category}`);
+    const data = await response.json();
+
+    console.log(data.response);
+
+    populateArticle(data);
+
+    generateButton.disabled = false;
+    dropdownMenu.classList.remove("is-active");
+  } catch (error) {
+    console.error(error);
+    generateButton.disabled = false;
+  }
+};
+
+// check for seed in URL and fetch previous article - does nothing if no seed
+const checkForSeed = async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const seed = urlParams.get("seed");
+
+  if (seed) {
+    try {
+      generateButton.disabled = true;
+      articleElement.classList.remove("is-active");
+
+      const response = await fetch(`${generatedEndpoint}${seed}`);
+      if (response.status !== 200) {
+        throw new Error("Seed not found");
+      }
+      const data = await response.json();
+
+      console.log(data.response);
+
+      populateArticle(data);
+
+      generateButton.disabled = false;
+      dropdownMenu.classList.remove("is-active");
+    } catch (error) {
+      console.error(error);
+      generateButton.disabled = false;
+    }
+  }
+};
+
+// populate the article with given json data
+const populateArticle = (data) => {
+  articleElement.classList.add("is-active");
+  articleTitle.textContent = data.response.title;
+  articleImg.src = `data:image/jpeg;base64,${data.response.urlToImage}`;
+  articleContent.textContent = data.response.content;
+  const generatedLink = window.location.origin + `?seed=${data.response.seed}`;
+  weblink.textContent = generatedLink;
+  window.history.replaceState({}, "", generatedLink);
+};
+
+// event listeners -------------------------------------------------------------
 dropdown.addEventListener("click", () => {
   dropdownMenu.classList.toggle("is-active");
 });
 
 generateButton.addEventListener("click", generateArticle);
-
 downloadButton.addEventListener("click", downloadArticle);
+
+// main -------------------------------------------------------------------------
+checkForSeed();

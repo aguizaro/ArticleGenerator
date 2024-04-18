@@ -139,6 +139,7 @@ button:focus-visible {
 
 #weblink {
   font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9em;
 }
 
 .dropdown {
