@@ -139,7 +139,7 @@ button:focus-visible {
 
 #weblink {
   font-family: 'Courier New', Courier, monospace;
-  font-size: 0.9em;
+  font-size: 1em;
 }
 
 .dropdown {
@@ -212,5 +212,9 @@ input[type="radio"] {
   .article.is-active {
     font-size: 0.75em;
     width: 95%;
+  }
+
+  #weblink {
+    font-size: 0.8em;
   }
 }
